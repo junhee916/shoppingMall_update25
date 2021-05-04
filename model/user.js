@@ -35,10 +35,28 @@ userSchema.pre('save', async function(next){
 
     try{
         const avatar = normalize(
-            gravatar.url({
-                
-            })
+            gravatar.url(this.email,{
+                s : '200',
+                r : 'rg',
+                d : 'mm'
+            }),
+
+            {forceHttps : true}
         )
+
+        this.profileImage = avatar
+
+        const salt = await bcrypt.genSalt(10)
+
+        const passwordHash = await bcrypt.sign(
+            this.password, salt
+        )
+
+        this.password = passwordHash
+
+        console.log('exited')
+
+        next()
     }
     catch (err){
         next(err)
