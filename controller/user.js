@@ -1,5 +1,4 @@
 const userModel = require('../model/user')
-const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 exports.users_signup_user = async (req, res) => {
@@ -48,7 +47,27 @@ exports.users_login_user = async (req, res) => {
             })
         }
         else{
+            await user.comparePassword(password, (err, isMatch) => {
+                if(err || !isMatch){
+                    return res.status(400).json({
+                        msg : 'not match password'
+                    })
+                }
+                else{
+                    const payload = {
+                        id : user._id,
+                        email : user.email
+                    }
 
+                    const token = jwt.sign(
+                        payload,
+                        process.env.SECRET_KEY,
+                        {expiresIn: '1h'}
+                    )
+
+                    res.json({token})
+                }
+            })
         }
 
 

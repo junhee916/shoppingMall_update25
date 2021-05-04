@@ -48,7 +48,7 @@ userSchema.pre('save', async function(next){
 
         const salt = await bcrypt.genSalt(10)
 
-        const passwordHash = await bcrypt.sign(
+        const passwordHash = await bcrypt.hash(
             this.password, salt
         )
 
@@ -64,7 +64,7 @@ userSchema.pre('save', async function(next){
 
 })
 
-userSchema.methods.comparePassword = (inputPassword, cb) => {
+userSchema.methods.comparePassword = function (inputPassword, cb) {
 
     bcrypt.compare(inputPassword, this.password, (err, isMatch) => {
         if(err) return cb(err)
