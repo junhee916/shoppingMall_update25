@@ -1,4 +1,7 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
+const normalize = require('normalize-url')
+const gravatar = require('gravatar')
 
 const userSchema = mongoose.Schema(
     {
@@ -14,11 +17,33 @@ const userSchema = mongoose.Schema(
         password : {
             type : String,
             required : true
+        },
+        role : {
+            type : String,
+            default : 'user'
+        },
+        profileImage : {
+            type : String
         }
     },
     {
         timestamps : true
     }
 )
+
+userSchema.pre('save', async function(next){
+
+    try{
+        const avatar = normalize(
+            gravatar.url({
+                
+            })
+        )
+    }
+    catch (err){
+        next(err)
+    }
+
+})
 
 module.exports = mongoose.model('user', userSchema)
